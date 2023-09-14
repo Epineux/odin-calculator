@@ -1,5 +1,8 @@
 function keepFirstNumber(e, numberString) {
   if (/\d/.test(calculatorScreen.textContent)) {
+    if (numberString[numberString.length - 1] === '.') { // If the last char of my number is . -> remove it
+      numberString = numberString.slice(0, -1);
+    }
     historyScreen.textContent = numberString + " " + e.target.textContent;
     calculatorScreen.textContent = '';
   }
@@ -47,7 +50,7 @@ numbersButtons.forEach(button => button.addEventListener('click', (e) => {
         break;
       case " . ":
         if (calculatorScreen.textContent === '') { // Add a 0 in front of it if first sign
-          calculatorScreen.textContent += ('0' + e.target.textContent).trim();
+          calculatorScreen.textContent += '0' + (e.target.textContent).trim();
           break;
         }
         if (/\./.test(calculatorScreen.textContent)) { // Only one dot !
