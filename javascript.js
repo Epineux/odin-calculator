@@ -112,6 +112,10 @@ equalButton.addEventListener('click', () => // When I press equal, I pass :
 document.addEventListener('keydown', (e, button) => {
   numbersButtons.forEach(button => {
     if (e.key === button.textContent.trim()) {
+      button.classList.add("click-animation");
+      setTimeout(() => {
+        button.classList.remove('click-animation');
+      }, 200);
       addNumber(button.textContent);
       return;
     } 
@@ -120,7 +124,15 @@ document.addEventListener('keydown', (e, button) => {
     calculate(Number(historyScreen.textContent.slice(0, -2)),
     Number(calculatorScreen.textContent),
     historyScreen.textContent.slice(-1));
+    equalButton.classList.add("click-animation");
+    setTimeout(() => {
+      equalButton.classList.remove('click-animation');
+    }, 200);
   } else if (e.key === 'Backspace') {
     calculatorScreen.textContent = calculatorScreen.textContent.slice(0, -1);
+    deleteButton.classList.add("click-animation");
+    setTimeout(() => {
+      deleteButton.classList.remove('click-animation');
+    }, 200);
   }
 });

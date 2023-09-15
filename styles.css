@@ -78,7 +78,16 @@ body {
   transform: translateY(4px) translateX(-2px);
   border-bottom: 5px solid #acafb4;
   border-left: 3px solid #acafb4;
-  border-right: 2px solid #acafb4;;
+  border-right: 2px solid #acafb4;
+}
+
+.click-animation {
+  box-shadow: 0px 0px 0px #1f618d;
+  transform: translateY(4px) translateX(-2px);
+  border-bottom: 5px solid #acafb4;
+  border-left: 3px solid #acafb4;
+  border-right: 2px solid #acafb4;
+  transition: 0.2s;
 }
 
 .machine {
