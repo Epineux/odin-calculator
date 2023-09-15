@@ -24,7 +24,11 @@ function calculate(a, b, operator) {
       result = (a / b).toFixed(5);
       break;
   }
-  calculatorScreen.textContent = parseFloat(result);
+  if (result.length < 15) {
+    calculatorScreen.textContent = parseFloat(result);
+  } else {
+    calculatorScreen.textContent = parseFloat(result).toExponential(8);
+  }
   historyScreen.textContent = '';
 }
 
@@ -33,15 +37,13 @@ const calculatorScreen = document.querySelector(".result");
 const historyScreen = document.querySelector(".history");
 const clearButton = document.querySelector(".clear");
 const deleteButton = document.querySelector(".delete");
-const addButton = document.querySelector(".add");
-const subButton = document.querySelector(".sub");
-const multiplyButton = document.querySelector(".multiply");
-const divideButton = document.querySelector(".divide");
+const operatorsButtons = document.querySelectorAll(".operators div:not(.exclude)")
 const equalButton = document.querySelector(".equal");
 
 
 numbersButtons.forEach(button => button.addEventListener('click', (e) => {
-  if(calculatorScreen.textContent.length < 18) { // If it's not longer than the screen
+  if(calculatorScreen.textContent.length < 15 && // If it's not too long
+    !/e/.test(calculatorScreen.textContent)) { // If it's not already an exponential
     switch (e.target.textContent) {
       case " - ":
         if (calculatorScreen.textContent === '') { // The '-' sign is only at the beginning
@@ -53,7 +55,8 @@ numbersButtons.forEach(button => button.addEventListener('click', (e) => {
           calculatorScreen.textContent += '0' + (e.target.textContent).trim();
           break;
         }
-        if (/\./.test(calculatorScreen.textContent)) { // Only one dot !
+        if (/\./.test(calculatorScreen.textContent) ||    // Only one dot !
+            calculatorScreen.textContent === '-') {       // And not just after the - sign
           break;
         }
       default:
@@ -69,10 +72,20 @@ deleteButton.addEventListener('click', () => {
   calculatorScreen.textContent = calculatorScreen.textContent.slice(0, -1);
 })
 // Adding the current number in history for every operator clicked
-addButton.addEventListener('click', (e) => keepFirstNumber(e, calculatorScreen.textContent));
-subButton.addEventListener('click', (e) => keepFirstNumber(e, calculatorScreen.textContent));
-multiplyButton.addEventListener('click', (e) => keepFirstNumber(e, calculatorScreen.textContent));
-divideButton.addEventListener('click', (e) => keepFirstNumber(e, calculatorScreen.textContent));
+operatorsButtons.forEach(button => button.addEventListener('click', (e) => {
+  if(historyScreen.textContent === '') {
+    keepFirstNumber(e, calculatorScreen.textContent);
+  } else {
+    calculate(Number(historyScreen.textContent.slice(0, -2)),
+    Number(calculatorScreen.textContent),
+    historyScreen.textContent.slice(-1));
+    // If the result is gave by typing a second operator without typing equal, 
+    // we keep the temp result in history and empty result screen (as the calculus continue)
+    historyScreen.textContent = calculatorScreen.textContent + ' ' + e.target.textContent;
+    calculatorScreen.textContent = '';
+  }
+  
+}));
 equalButton.addEventListener('click', () => // When I press equal, I pass :
   calculate(Number(historyScreen.textContent.slice(0, -2)), // The first number
   Number(calculatorScreen.textContent), // The second one
