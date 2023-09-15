@@ -32,6 +32,42 @@ function calculate(a, b, operator) {
   historyScreen.textContent = '';
 }
 
+function keepNumber(e) {
+  addNumber(e.target.textContent);
+}
+
+function addNumber(number) {
+  if(calculatorScreen.textContent.length < 15 && // If it's not too long
+  !/e/.test(calculatorScreen.textContent)) { // If it's not already an exponential
+    switch (number) {
+      case " - ":
+        if (calculatorScreen.textContent === '') { // The '-' sign is only at the beginning
+          calculatorScreen.textContent = '-';
+        }
+        break;
+      case " . ":
+        if (calculatorScreen.textContent === '') { // Add a 0 in front of it if first sign
+          calculatorScreen.textContent += '0' + number.trim();
+          break;
+        }
+        if (/\./.test(calculatorScreen.textContent) ||    // Only one dot !
+            calculatorScreen.textContent === '-') {       // And not just after the - sign
+          break;
+        }
+        calculatorScreen.textContent += number.trim();
+        break;
+      case ' 0 ':
+        // No multiple 0 for nothing
+        if(/^[0-]+$|^-+$|^[0-]+-+|-+[0-]+$/.test(calculatorScreen.textContent) &&
+        calculatorScreen.textContent != "-") {
+          break;
+        }
+      default:
+        calculatorScreen.textContent += number.trim();
+    }
+  }
+}
+
 const numbersButtons = document.querySelectorAll(".numbers > .cell");
 const calculatorScreen = document.querySelector(".result");
 const historyScreen = document.querySelector(".history");
@@ -40,30 +76,10 @@ const deleteButton = document.querySelector(".delete");
 const operatorsButtons = document.querySelectorAll(".operators div:not(.exclude)")
 const equalButton = document.querySelector(".equal");
 
+// Getting left remote responsive
+numbersButtons.forEach(button => button.addEventListener('click', keepNumber));
 
-numbersButtons.forEach(button => button.addEventListener('click', (e) => {
-  if(calculatorScreen.textContent.length < 15 && // If it's not too long
-    !/e/.test(calculatorScreen.textContent)) { // If it's not already an exponential
-    switch (e.target.textContent) {
-      case " - ":
-        if (calculatorScreen.textContent === '') { // The '-' sign is only at the beginning
-          calculatorScreen.textContent = '-';
-        }
-        break;
-      case " . ":
-        if (calculatorScreen.textContent === '') { // Add a 0 in front of it if first sign
-          calculatorScreen.textContent += '0' + (e.target.textContent).trim();
-          break;
-        }
-        if (/\./.test(calculatorScreen.textContent) ||    // Only one dot !
-            calculatorScreen.textContent === '-') {       // And not just after the - sign
-          break;
-        }
-      default:
-        calculatorScreen.textContent += e.target.textContent.trim();
-    }
-  }
-}));
+// Getting right remote responsive
 clearButton.addEventListener('click', () => {
   calculatorScreen.textContent = '';
   historyScreen.textContent = '';
@@ -71,6 +87,7 @@ clearButton.addEventListener('click', () => {
 deleteButton.addEventListener('click', () => {
   calculatorScreen.textContent = calculatorScreen.textContent.slice(0, -1);
 })
+
 // Adding the current number in history for every operator clicked
 operatorsButtons.forEach(button => button.addEventListener('click', (e) => {
   if(historyScreen.textContent === '') {
@@ -84,9 +101,26 @@ operatorsButtons.forEach(button => button.addEventListener('click', (e) => {
     historyScreen.textContent = calculatorScreen.textContent + ' ' + e.target.textContent;
     calculatorScreen.textContent = '';
   }
-  
 }));
+
 equalButton.addEventListener('click', () => // When I press equal, I pass :
   calculate(Number(historyScreen.textContent.slice(0, -2)), // The first number
   Number(calculatorScreen.textContent), // The second one
   historyScreen.textContent.slice(-1))); // The operator to calculate()
+
+// Getting keyboard responsive
+document.addEventListener('keydown', (e, button) => {
+  numbersButtons.forEach(button => {
+    if (e.key === button.textContent.trim()) {
+      addNumber(button.textContent);
+      return;
+    } 
+  });
+  if (e.key === 'Enter') { // As if we clicked "="
+    calculate(Number(historyScreen.textContent.slice(0, -2)),
+    Number(calculatorScreen.textContent),
+    historyScreen.textContent.slice(-1));
+  } else if (e.key === 'Backspace') {
+    calculatorScreen.textContent = calculatorScreen.textContent.slice(0, -1);
+  }
+});
