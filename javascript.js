@@ -21,6 +21,10 @@ function calculate(a, b, operator) {
       result = (a * b).toFixed(5);
       break;
     case '/':
+      if (b == 0) {
+        dividedByZero();
+        return;
+      }
       result = (a / b).toFixed(5);
       break;
   }
@@ -68,6 +72,20 @@ function addNumber(number) {
   }
 }
 
+// You can't divide by 0 !
+function dividedByZero() {
+  document.querySelector(".header").textContent = "Error";
+  document.querySelector("body").style.backgroundColor = "black";
+  cells.forEach(cell => {
+    const newCell = cell.cloneNode(true); // Create a copy of all cells without event listener
+    newCell.textContent = "X";
+    cell.parentNode.replaceChild(newCell, cell);
+  });
+  historyScreen.textContent = "You CAN'T divide by 0 !";
+  calculatorScreen.textContent = "Please reload the page";
+}
+
+const cells = document.querySelectorAll(".cell");
 const numbersButtons = document.querySelectorAll(".numbers > .cell");
 const calculatorScreen = document.querySelector(".result");
 const historyScreen = document.querySelector(".history");
@@ -99,25 +117,29 @@ deleteButton.addEventListener('click', () => {
 
 // Adding the current number in history for every operator clicked
 operatorsButtons.forEach(button => button.addEventListener('click', (e) => {
-  if(historyScreen.textContent === '') {
-    keepFirstNumber(e, calculatorScreen.textContent);
-  } else {
-    calculate(Number(historyScreen.textContent.slice(0, -2)),
-    Number(calculatorScreen.textContent),
-    historyScreen.textContent.slice(-1));
-    // If the result is gave by typing a second operator without typing equal, 
-    // we keep the temp result in history and empty result screen (as the calculus continue)
-    historyScreen.textContent = calculatorScreen.textContent + ' ' + e.target.textContent;
-    calculatorScreen.textContent = '';
+  if (calculatorScreen.textContent != '' && calculatorScreen.textContent != '-') {
+    if (historyScreen.textContent === '') {
+      keepFirstNumber(e, calculatorScreen.textContent);
+    } else {
+      calculate(Number(historyScreen.textContent.slice(0, -2)),
+      Number(calculatorScreen.textContent),
+      historyScreen.textContent.slice(-1));
+      // If the result is gave by typing a second operator without typing equal, 
+      // we keep the temp result in history and empty result screen (as the calculus continue)
+      historyScreen.textContent = calculatorScreen.textContent + ' ' + e.target.textContent;
+      calculatorScreen.textContent = '';
+    }
   }
   audio.currentTime = 0;
   audio.play();
 }));
 
 equalButton.addEventListener('click', () => { // When I press equal, I pass :
-  calculate(Number(historyScreen.textContent.slice(0, -2)), // The first number
-  Number(calculatorScreen.textContent), // The second one
-  historyScreen.textContent.slice(-1));  // The operator to calculate()
+  if (calculatorScreen.textContent != '' && calculatorScreen.textContent != '-' && historyScreen.textContent != '') {
+    calculate(Number(historyScreen.textContent.slice(0, -2)), // The first number
+    Number(calculatorScreen.textContent), // The second one
+    historyScreen.textContent.slice(-1));  // The operator to calculate()
+  }
   audio.currentTime = 0;
   audio.play();
 }); 
@@ -137,9 +159,11 @@ document.addEventListener('keydown', (e, button) => {
     } 
   });
   if (e.key === 'Enter') { // As if we clicked "="
-    calculate(Number(historyScreen.textContent.slice(0, -2)),
-    Number(calculatorScreen.textContent),
-    historyScreen.textContent.slice(-1));
+    if (calculatorScreen.textContent != '' && calculatorScreen.textContent != '-' && historyScreen.textContent != '') {
+      calculate(Number(historyScreen.textContent.slice(0, -2)),
+      Number(calculatorScreen.textContent),
+      historyScreen.textContent.slice(-1));
+    }
     equalButton.classList.add("click-animation");
     setTimeout(() => {
       equalButton.classList.remove('click-animation');
