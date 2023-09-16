@@ -53,7 +53,7 @@ body {
   border-right: 2px solid #acafb4;
   border-bottom: 8px solid #acafb4;
   box-sizing: border-box;
-  border-radius: 5px;
+  border-radius: 25px;
   box-shadow: -2px 4px 0px #1f618d;
   transition: transform 0.2s, box-shadow 0.2s;
   aspect-ratio: 1/1;

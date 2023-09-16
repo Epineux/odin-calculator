@@ -75,17 +75,26 @@ const clearButton = document.querySelector(".clear");
 const deleteButton = document.querySelector(".delete");
 const operatorsButtons = document.querySelectorAll(".operators div:not(.exclude)")
 const equalButton = document.querySelector(".equal");
+const audio = document.querySelector(".myAudio");
 
 // Getting left remote responsive
-numbersButtons.forEach(button => button.addEventListener('click', keepNumber));
+numbersButtons.forEach(button => button.addEventListener('click', (e) => {
+  keepNumber(e);
+  audio.currentTime = 0;
+  audio.play();
+}));
 
 // Getting right remote responsive
 clearButton.addEventListener('click', () => {
   calculatorScreen.textContent = '';
   historyScreen.textContent = '';
+  audio.currentTime = 0;
+  audio.play();
 });
 deleteButton.addEventListener('click', () => {
   calculatorScreen.textContent = calculatorScreen.textContent.slice(0, -1);
+  audio.currentTime = 0;
+  audio.play();
 })
 
 // Adding the current number in history for every operator clicked
@@ -101,22 +110,29 @@ operatorsButtons.forEach(button => button.addEventListener('click', (e) => {
     historyScreen.textContent = calculatorScreen.textContent + ' ' + e.target.textContent;
     calculatorScreen.textContent = '';
   }
+  audio.currentTime = 0;
+  audio.play();
 }));
 
-equalButton.addEventListener('click', () => // When I press equal, I pass :
+equalButton.addEventListener('click', () => { // When I press equal, I pass :
   calculate(Number(historyScreen.textContent.slice(0, -2)), // The first number
   Number(calculatorScreen.textContent), // The second one
-  historyScreen.textContent.slice(-1))); // The operator to calculate()
+  historyScreen.textContent.slice(-1));  // The operator to calculate()
+  audio.currentTime = 0;
+  audio.play();
+}); 
 
 // Getting keyboard responsive
 document.addEventListener('keydown', (e, button) => {
   numbersButtons.forEach(button => {
     if (e.key === button.textContent.trim()) {
+      addNumber(button.textContent);
       button.classList.add("click-animation");
       setTimeout(() => {
         button.classList.remove('click-animation');
       }, 200);
-      addNumber(button.textContent);
+      audio.currentTime = 0;
+      audio.play();
       return;
     } 
   });
@@ -128,11 +144,15 @@ document.addEventListener('keydown', (e, button) => {
     setTimeout(() => {
       equalButton.classList.remove('click-animation');
     }, 200);
+    audio.currentTime = 0;
+    audio.play();
   } else if (e.key === 'Backspace') {
     calculatorScreen.textContent = calculatorScreen.textContent.slice(0, -1);
     deleteButton.classList.add("click-animation");
     setTimeout(() => {
       deleteButton.classList.remove('click-animation');
     }, 200);
+    audio.currentTime = 0;
+    audio.play();
   }
 });
