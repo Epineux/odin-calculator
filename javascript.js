@@ -82,7 +82,7 @@ function dividedByZero() {
     cell.parentNode.replaceChild(newCell, cell);
   });
   historyScreen.textContent = "You CAN'T divide by 0 !";
-  calculatorScreen.textContent = "Please reload the page";
+  calculatorScreen.textContent = "Please reload the page.";
 }
 
 const cells = document.querySelectorAll(".cell");
